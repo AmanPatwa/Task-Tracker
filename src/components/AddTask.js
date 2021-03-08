@@ -1,6 +1,8 @@
-import {useState} from 'react'
+import {useState, useContext} from 'react'
+import {TaskContext} from '../context'
 
 const AddTask = (props) => {
+    const [tasks,setTasks] = useContext(TaskContext)
     const [text, setText] = useState('')
     const [day, setDay] = useState('')
     const [reminder, setReminder] = useState(false)
@@ -11,12 +13,26 @@ const AddTask = (props) => {
             alert('Some field are missing')
             return
         }
-        props.onAdd({text,day,reminder})
+        addTask({text,day,reminder})
 
         setText('')
         setDay('')
         setReminder(false)
     }
+
+    const addTask = async (task) => {
+        // const id = Math.floor(Math.random()*1000) +1
+    
+        const response = await fetch('http://localhost:5000/tasks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(task),
+        })
+        const data = await response.json()
+        setTasks([...tasks, data])
+      }
 
     return (
 
